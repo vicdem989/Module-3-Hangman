@@ -1,3 +1,7 @@
+using System.Net;
+using LANGUAGE;
+using Microsoft.VisualBasic;
+
 namespace GAME
 {
     public class Game
@@ -10,19 +14,28 @@ namespace GAME
         private static string wordDisplay = CreateWordDisplay(word);
         private static string currentDrawing = Graphics.HANGMAN_STATE_DRAWINGS[currentAtemptsAtGuessingWord];
         private static bool isPlaying = true;
+        private static List<string> charGuessed = new List<string>();
+
 
         static void Main(string[] args)
+        {
+            DifferentLanguages.appText = DifferentLanguages.chooseLanguage();
+            StartGame();
+
+        }
+
+        private static void StartGame()
         {
             while (isPlaying)
             {
                 Clear();
-                if (DEBUG)
+                if (!DEBUG)
                 {
-                    Print($"Word : {word}");
+                    Print(DifferentLanguages.appText.Word + $"{word}");
                 }
-                Print($"Word : {wordDisplay}");
+                Print(DifferentLanguages.appText.Word + $"{wordDisplay}");
                 Print(currentDrawing);
-                Print("Guess a letter : ", newLine: false);
+                Print(DifferentLanguages.appText.GuessLetter, newLine: false);
 
                 char guess = ReadChar();
                 if (word.Contains(guess))
@@ -39,18 +52,25 @@ namespace GAME
                 {
                     currentAtemptsAtGuessingWord++;
                     currentDrawing = Graphics.HANGMAN_STATE_DRAWINGS[currentAtemptsAtGuessingWord];
+
+                    for (int i = 0; i < word.Length; i++)
+                        foreach (string letter in charGuessed)
+                        {
+                            charGuessed.Add(word[i]);
+                            Console.WriteLine(letter);
+                        }
                 }
 
                 if (wordDisplay == word)
                 {
                     Clear();
-                    Print($"You won! The word was {word}");
+                    Print(DifferentLanguages.appText.YouWon + $"{word}");
                     isPlaying = false;
                 }
                 else if (currentAtemptsAtGuessingWord == MAX_ATEMPTS)
                 {
                     Clear();
-                    Print($"You lost! The word was {word}");
+                    Print(DifferentLanguages.appText.YouLost + $"{word}");
                     isPlaying = false;
                 }
             }
