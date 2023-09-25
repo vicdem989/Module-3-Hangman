@@ -8,28 +8,27 @@ namespace GAME
     {
         private const bool DEBUG = true;
         private static string[] WORD_LIST = new[] { "car", "cat", "dog", "elephant", "fish", "giraffe", "horse", "monkey", "panda", "sheep", "tiger", "zebra", "ant", "bee", "marmelade", "computer", "dax", "sjøbanan" };
-        private static int MAX_ATEMPTS = Graphics.HANGMAN_STATE_DRAWINGS.Length - 1;
-        private static int currentAtemptsAtGuessingWord = 0;
+        private static int MAX_ATTEMPTS = Graphics.HANGMAN_STATE_DRAWINGS.Length - 1;
+        private static int currentAttemptsAtGuessingWord = 0;
         private static string word = PickRandomItemFromList(WORD_LIST);
         private static string wordDisplay = CreateWordDisplay(word);
-        private static string currentDrawing = Graphics.HANGMAN_STATE_DRAWINGS[currentAtemptsAtGuessingWord];
+        private static string currentDrawing = Graphics.HANGMAN_STATE_DRAWINGS[currentAttemptsAtGuessingWord];
         private static bool isPlaying = true;
-        private static List<string> charGuessed = new List<string>();
+        private static List<char> charGuessed = new List<char>();
 
 
         static void Main(string[] args)
         {
             DifferentLanguages.appText = DifferentLanguages.chooseLanguage();
             StartGame();
-
         }
 
         private static void StartGame()
         {
             while (isPlaying)
             {
-                Clear();
-                if (!DEBUG)
+                //Clear();
+                if (DEBUG)
                 {
                     Print(DifferentLanguages.appText.Word + $"{word}");
                 }
@@ -50,26 +49,27 @@ namespace GAME
                 }
                 else
                 {
-                    currentAtemptsAtGuessingWord++;
-                    currentDrawing = Graphics.HANGMAN_STATE_DRAWINGS[currentAtemptsAtGuessingWord];
+                    Clear();
+                    currentAttemptsAtGuessingWord++;
+                    currentDrawing = Graphics.HANGMAN_STATE_DRAWINGS[currentAttemptsAtGuessingWord];
+                    charGuessed.Add(Convert.ToChar(guess));
+                    for (int i = 0; i < charGuessed.Count; i++)
+                    {
+                        Console.Write(charGuessed[i] + " ");
+                    }
+                    Console.WriteLine();
 
-                    for (int i = 0; i < word.Length; i++)
-                        foreach (string letter in charGuessed)
-                        {
-                            charGuessed.Add(word[i]);
-                            Console.WriteLine(letter);
-                        }
                 }
 
                 if (wordDisplay == word)
                 {
-                    Clear();
+                    //Clear();
                     Print(DifferentLanguages.appText.YouWon + $"{word}");
                     isPlaying = false;
                 }
-                else if (currentAtemptsAtGuessingWord == MAX_ATEMPTS)
+                else if (currentAttemptsAtGuessingWord == MAX_ATTEMPTS)
                 {
-                    Clear();
+                    //clear();
                     Print(DifferentLanguages.appText.YouLost + $"{word}");
                     isPlaying = false;
                 }
