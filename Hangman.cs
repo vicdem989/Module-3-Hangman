@@ -1,8 +1,10 @@
 using System.Data;
 using System.Net;
 using System.Reflection.Metadata.Ecma335;
+using System.Runtime.InteropServices;
 using LANGUAGE;
 using Microsoft.VisualBasic;
+using SCREEN;
 
 namespace GAME
 {
@@ -24,11 +26,10 @@ namespace GAME
 
         static void Main(string[] args)
         {
-            DifferentLanguages.appText = DifferentLanguages.chooseLanguage();
-            GameLogic();
+            StartScreen.createStartScreen();
         }
 
-        private static void GameLogic()
+        public static void GameLogic()
         {
 
             while (isPlaying)
@@ -59,27 +60,52 @@ namespace GAME
                     currentAttemptsAtGuessingWord++;
                     currentDrawing = Graphics.HANGMAN_STATE_DRAWINGS[currentAttemptsAtGuessingWord];
                 }
-                
-                //Print("There may be a " + LetterHint().ToString() + " in the word.");
                 GuessedChars();
-                Print(letterHint + LetterHint().ToString());
+
+                if (currentAttemptsAtGuessingWord == 1) 
+                {
+                    Console.WriteLine("Hint?");
+                    string response = Console.ReadLine();
+
+                    if (response == "yes")
+                    {
+                        Print("kldasjkldjaskldja     " + LetterHint().ToString());
+                    }
+                    else
+                    {
+                        checkPlayStatus();
+                        return;
+                    }
+                }
                 checkPlayStatus();
+
+
+
             }
         }
 
-        private static bool LetterHint()
-        { //Give random hint and check if the letter is already guesses
-            int minNumber = 1;
-            int maxNumber = wordDisplay.Length - 1;
-            
-            letterHint = word[randomNumber.Next(minNumber, maxNumber)];
-            return charGuessed.Any(x => x == letterHint);
-            /*while(checkIfHintAlreadyGuessed) {
-                letterHint = word[randomNumber.Next(minNumber, maxNumber)];
-            }
-            return letterHint;   */
+
+
+        private static char LetterHint()
+        {
+            //Get a random letter from final word
+            //Check if letter is already guesses, aka found in charGuessed
+            //If found, get new letter
+            //else return char
+            char chosenLetter;
+            bool charGuessedCheck;
+            do
+            {
+                chosenLetter = word[randomNumber.Next(0, word.Length)];
+                charGuessedCheck = charGuessed.Contains(chosenLetter);//Any(x => x == chosenLetter);
+                if (charGuessedCheck)
+                    LetterHint();
+            } while (charGuessedCheck);
+
+            return chosenLetter;
+
         }
-        
+
 
         private static void checkPlayStatus()
         {
