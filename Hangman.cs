@@ -4,6 +4,7 @@ using System.Reflection.Metadata.Ecma335;
 using System.Runtime.InteropServices;
 using LANGUAGE;
 using Microsoft.VisualBasic;
+using STATS;
 using SCREEN;
 
 namespace GAME
@@ -22,14 +23,15 @@ namespace GAME
         private static List<char> charGuessed = new List<char>();
         private static char guess = '\0';
         private static Random randomNumber = new Random();
-        private static char letterHint = '\0';
+        public static int correctGuesses = 0;
+        public static List<GameTracker> amountGames = new List<GameTracker>();
 
 
         static void Main(string[] args)
         {
             createNewList();
             //Print(wordsFromFile[randomNumber.Next(wordsFromFile.Count)]);
-            //StartScreen.createStartScreen();
+            StartScreen.createStartScreen();
         }
 
         public static void GameLogic()
@@ -56,6 +58,7 @@ namespace GAME
                             wordDisplay = wordDisplay.Remove(i, 1).Insert(i, guess.ToString());
                         }
                     }
+                    correctGuesses++;
                 }
                 else
                 {
@@ -71,17 +74,23 @@ namespace GAME
                     GetHint(Console.ReadLine().ToLower());
                 }
                 checkPlayStatus();
-
-
-
             }
+
+            amountGames.Add(new GameTracker
+            {
+                gameID = 1,
+                gameWord = word,
+                amountCharGuessedCorrect = correctGuesses
+            });
         }
 
-        private static List<string> createNewList() {
+        private static List<string> createNewList()
+        {
             StreamReader sr = new StreamReader("words.txt");
             String line = "";
             line = sr.ReadLine();
-            while(line != null) {
+            while (line != null)
+            {
                 line = sr.ReadLine();
                 wordsFromFile.Add(line);
             }
@@ -175,9 +184,11 @@ namespace GAME
 
         public static string PickRandomItemFromList(List<string> list)
         {
+            //BUG - can't get random word from wordsFromFile
             Random random = new Random();
             int randomIndex = random.Next(list.Count);
-            return wordsFromFile[randomNumber.Next(wordsFromFile.Count)];
+            //return wordsFromFile[randomNumber.Next(wordsFromFile.Count)];
+            return "word";
         }
 
         private static string CreateWordDisplay(string word)

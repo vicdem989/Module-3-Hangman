@@ -8,6 +8,7 @@ namespace LANGUAGE
         public static ApplicationStrings appText = LangEN.appTextEN;
         public static ApplicationStrings chooseLanguage()
         {
+            Console.Clear();
             ANSI_COLORS.Colors.AddColor("Choose a language:", ANSI_COLORS.Colors.Bold);
             Console.WriteLine("1: Norwegian (no)");
             Console.WriteLine("2: English (en)");
