@@ -12,9 +12,10 @@ namespace GAME
     {
         private const bool DEBUG = true;
         private static string[] WORD_LIST = new[] { "car", "cat", "dog", "elephant", "fish", "giraffe", "horse", "monkey", "panda", "sheep", "tiger", "zebra", "ant", "bee", "marmelade", "computer", "dax", "sjobanan" };
+        private static List<string> wordsFromFile = new List<string>();
         private static int MAX_ATTEMPTS = Graphics.HANGMAN_STATE_DRAWINGS.Length - 1;
         private static int currentAttemptsAtGuessingWord = 0;
-        private static string word = PickRandomItemFromList(WORD_LIST);
+        private static string word = PickRandomItemFromList(wordsFromFile);
         private static string wordDisplay = CreateWordDisplay(word);
         private static string currentDrawing = Graphics.HANGMAN_STATE_DRAWINGS[currentAttemptsAtGuessingWord];
         private static bool isPlaying = true;
@@ -26,7 +27,9 @@ namespace GAME
 
         static void Main(string[] args)
         {
-            StartScreen.createStartScreen();
+            createNewList();
+            //Print(wordsFromFile[randomNumber.Next(wordsFromFile.Count)]);
+            //StartScreen.createStartScreen();
         }
 
         public static void GameLogic()
@@ -62,20 +65,10 @@ namespace GAME
                 }
                 GuessedChars();
 
-                if (currentAttemptsAtGuessingWord == 1) 
+                if (currentAttemptsAtGuessingWord >= word.Length / 2)
                 {
                     Console.WriteLine("Hint?");
-                    string response = Console.ReadLine();
-
-                    if (response == "yes")
-                    {
-                        Print("kldasjkldjaskldja     " + LetterHint().ToString());
-                    }
-                    else
-                    {
-                        checkPlayStatus();
-                        return;
-                    }
+                    GetHint(Console.ReadLine().ToLower());
                 }
                 checkPlayStatus();
 
@@ -84,14 +77,33 @@ namespace GAME
             }
         }
 
+        private static List<string> createNewList() {
+            StreamReader sr = new StreamReader("words.txt");
+            String line = "";
+            line = sr.ReadLine();
+            while(line != null) {
+                line = sr.ReadLine();
+                wordsFromFile.Add(line);
+            }
+            sr.Close();
+            return wordsFromFile;
+        }
 
+        private static void GetHint(string response)
+        {
+            if (response == "yes" || response == "j")
+            {
+                Print("kldasjkldjaskldja     " + LetterHint().ToString());
+            }
+            else
+            {
+                checkPlayStatus();
+            }
+        }
 
         private static char LetterHint()
         {
-            //Get a random letter from final word
-            //Check if letter is already guesses, aka found in charGuessed
-            //If found, get new letter
-            //else return char
+            //BUG - Sometimes it chooses a word not in
             char chosenLetter;
             bool charGuessedCheck;
             do
@@ -161,11 +173,11 @@ namespace GAME
             }
         }
 
-        private static string PickRandomItemFromList(string[] list)
+        public static string PickRandomItemFromList(List<string> list)
         {
             Random random = new Random();
-            int randomIndex = random.Next(0, list.Length);
-            return list[randomIndex];
+            int randomIndex = random.Next(list.Count);
+            return wordsFromFile[randomNumber.Next(wordsFromFile.Count)];
         }
 
         private static string CreateWordDisplay(string word)

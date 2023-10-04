@@ -29,6 +29,7 @@ namespace SCREEN
         {
             Console.Clear();
             Console.WriteLine("Pick a mode");
+            Console.WriteLine("1 = Game");
             string input = Console.ReadLine().ToLower().Trim();
             if (input == "1")
             {
