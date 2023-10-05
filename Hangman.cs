@@ -16,7 +16,7 @@ namespace GAME
         private static List<string> wordsFromFile = new List<string>();
         private static int MAX_ATTEMPTS = Graphics.HANGMAN_STATE_DRAWINGS.Length - 1;
         private static int currentAttemptsAtGuessingWord = 0;
-        private static string word = PickRandomItemFromList(wordsFromFile);
+        private static string word = String.Empty;
         private static string wordDisplay = CreateWordDisplay(word);
         private static string currentDrawing = Graphics.HANGMAN_STATE_DRAWINGS[currentAttemptsAtGuessingWord];
         private static bool isPlaying = true;
@@ -30,15 +30,15 @@ namespace GAME
         static void Main(string[] args)
         {
             createNewList();
-            //Print(wordsFromFile[randomNumber.Next(wordsFromFile.Count)]);
             StartScreen.createStartScreen();
         }
 
         public static void GameLogic()
         {
-
+            word = PickRandomItemFromList(wordsFromFile);
             while (isPlaying)
             {
+
                 if (DEBUG)
                 {
                     Print(DifferentLanguages.appText.Word + $"{word}");
@@ -55,7 +55,7 @@ namespace GAME
                     {
                         if (word[i] == guess)
                         {
-                            wordDisplay = wordDisplay.Remove(i, 1).Insert(i, guess.ToString());
+                            wordDisplay = wordDisplay.Remove(i, 1).Insert(i, guess.ToString()); 
                         }
                     }
                     correctGuesses++;
@@ -87,7 +87,7 @@ namespace GAME
         private static List<string> createNewList()
         {
             StreamReader sr = new StreamReader("words.txt");
-            String line = "";
+            String line = string.Empty;
             line = sr.ReadLine();
             while (line != null)
             {
@@ -112,19 +112,17 @@ namespace GAME
 
         private static char LetterHint()
         {
-            //BUG - Sometimes it chooses a word not in
             char chosenLetter;
             bool charGuessedCheck;
             do
             {
                 chosenLetter = word[randomNumber.Next(0, word.Length)];
-                charGuessedCheck = charGuessed.Contains(chosenLetter);//Any(x => x == chosenLetter);
+                charGuessedCheck = charGuessed.Contains(chosenLetter);
                 if (charGuessedCheck)
-                    LetterHint();
+                    chosenLetter = word[randomNumber.Next(0, word.Length)];
             } while (charGuessedCheck);
 
             return chosenLetter;
-
         }
 
 
@@ -184,11 +182,7 @@ namespace GAME
 
         public static string PickRandomItemFromList(List<string> list)
         {
-            //BUG - can't get random word from wordsFromFile
-            Random random = new Random();
-            int randomIndex = random.Next(list.Count);
-            //return wordsFromFile[randomNumber.Next(wordsFromFile.Count)];
-            return "word";
+            return wordsFromFile[randomNumber.Next(wordsFromFile.Count - 2)];
         }
 
         private static string CreateWordDisplay(string word)
