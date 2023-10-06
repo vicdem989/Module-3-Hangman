@@ -7,12 +7,7 @@ namespace SPLASHSCREEN
     {
         public static void writeSplashScreen()
         {
-            Colors.AddColor("Welcome to rock, paper, scissors, spock, lizard!", Colors.Green);
-            LoadingBar();
-            Colors.AddColor("Where only the most brutal of plays take place!", Colors.Magenta);
-            LoadingBar();
-            Colors.AddColor("Saddle up, and get ready for a ride!", Colors.BoldRed);
-            LoadingBar();
+            Colors.AddColor("Lets play some hangman!", Colors.Green);
             LoadingNumber();
         }
         public static void LoadingBar()

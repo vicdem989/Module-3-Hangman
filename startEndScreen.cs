@@ -1,4 +1,5 @@
 using System.Diagnostics.Contracts;
+using System.Dynamic;
 using System.Globalization;
 using ANSI_COLORS;
 using GAME;
@@ -10,18 +11,18 @@ namespace SCREEN
     {
         public static void createStartScreen()
         {
-            Console.Clear();
             startScreenText();
 
         }
 
         static void startScreenText()
         {            
-            Console.Clear();
-            Console.WriteLine("Pick a mode");
-            Console.WriteLine("1 - Game");
-            Console.WriteLine("2 - Choose a language");
-            Console.WriteLine("3 - Exit game");
+            Game.Clear();
+            Colors.AddColor(DifferentLanguages.appText.PickAMode, Colors.Bold);
+            Game.Print(DifferentLanguages.appText.Game);
+            Game.Print(DifferentLanguages.appText.ChooseLanguage);
+            Game.Print(DifferentLanguages.appText.GetInfo);
+            Colors.AddColor(DifferentLanguages.appText.ExitGame, Colors.Red);
             string decision = Console.ReadLine().ToLower();
             startMenuLogic(decision);
 
@@ -35,13 +36,16 @@ namespace SCREEN
             }
             else if (input == "2")
             {
-                DifferentLanguages.chooseLanguage();
-                createStartScreen();
+                DifferentLanguages.appText = DifferentLanguages.chooseLanguage();
+                startScreenText();
+            } else if (input == "3") {
+                Game.Clear();
+                getInfo();
             }
-            else if (input == "3")
+            else if (input == "4")
             {
-                Console.Clear();
-                Console.WriteLine("Thanks for playing");
+                Game.Clear();
+                Game.Print("Thanks for playing");
                 System.Environment.Exit(1);
             }
             else
@@ -50,12 +54,20 @@ namespace SCREEN
             }
         }
 
+        private static void getInfo() {
 
+            Game.Print(DifferentLanguages.appText.DifficultyExplained);
+            Game.Print(DifferentLanguages.appText.EasyExplained);
+            Game.Print(DifferentLanguages.appText.ExtremeExplained);
+            Game.Print(DifferentLanguages.appText.Enter);
+            Console.ReadLine();
+            startScreenText();
 
+        }
 
-        public static int getInt()
+        private static int getInt()
         {
-            Console.Clear();
+            Game.Clear();
             string inputRound = Console.ReadLine();
             int result = 0;
             while (!int.TryParse(inputRound, out result))
@@ -90,12 +102,12 @@ namespace SCREEN
             }
             else if (input == "m")
             {
-                Console.Clear();
+                Game.Clear();
                 StartScreen.createStartScreen();
             }
             else
             {
-                Console.Clear();
+                Game.Clear();
             }
         }
     }
