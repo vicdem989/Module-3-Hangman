@@ -31,7 +31,7 @@ namespace SCREEN
         {
             if (input == "1")
             {
-                Game.GameLogic();
+                Game.chooseDifficulty();
             }
             else if (input == "2")
             {

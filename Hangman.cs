@@ -6,13 +6,14 @@ using LANGUAGE;
 using Microsoft.VisualBasic;
 using STATS;
 using SCREEN;
+using System.Security.Cryptography.X509Certificates;
+using ANSI_COLORS;
 
 namespace GAME
 {
     public class Game
     {
         private const bool DEBUG = true;
-        private static string[] WORD_LIST = new[] { "car", "cat", "dog", "elephant", "fish", "giraffe", "horse", "monkey", "panda", "sheep", "tiger", "zebra", "ant", "bee", "marmelade", "computer", "dax", "sjobanan" };
         private static List<string> wordsFromFile = new List<string>();
         private static int MAX_ATTEMPTS = Graphics.HANGMAN_STATE_DRAWINGS.Length - 1;
         private static int currentAttemptsAtGuessingWord = 0;
@@ -25,16 +26,21 @@ namespace GAME
         private static Random randomNumber = new Random();
         public static int correctGuesses = 0;
         public static List<GameTracker> amountGames = new List<GameTracker>();
+        public static int amountHints = 0;
+        public static int increaseInDrawing = 0;
+        public static string chosenMode = String.Empty;
+        public static bool startCheck;
 
 
         static void Main(string[] args)
         {
+            //GIB INFO ABOUT HOW DIFFICULTIES WORK
             createNewList();
             StartScreen.createStartScreen();
         }
 
         public static void GameLogic()
-        {   
+        {
             word = PickRandomItemFromList(wordsFromFile);
             wordDisplay = CreateWordDisplay(word);
             while (isPlaying)
@@ -55,7 +61,7 @@ namespace GAME
                     {
                         if (word[i] == guess)
                         {
-                            wordDisplay = wordDisplay.Remove(i, 1).Insert(i, guess.ToString()); 
+                            wordDisplay = wordDisplay.Remove(i, 1).Insert(i, guess.ToString());
                         }
                     }
                     correctGuesses++;
@@ -63,16 +69,12 @@ namespace GAME
                 else
                 {
                     Clear();
-                    currentAttemptsAtGuessingWord++;
+                    currentAttemptsAtGuessingWord += increaseInDrawing;
+
                     currentDrawing = Graphics.HANGMAN_STATE_DRAWINGS[currentAttemptsAtGuessingWord];
                 }
                 GuessedChars();
-
-                if (currentAttemptsAtGuessingWord >= word.Length / 2)
-                {
-                    Console.WriteLine("Hint?");
-                    GetHint(Console.ReadLine().ToLower());
-                }
+                hintCheck();
                 checkPlayStatus();
             }
 
@@ -82,6 +84,73 @@ namespace GAME
                 gameWord = word,
                 amountCharGuessedCorrect = correctGuesses
             });
+        }
+
+        private static void hintCheck()
+        {
+            if (amountHints == 0)
+                return;
+            if (currentAttemptsAtGuessingWord >= word.Length / 2)
+            {
+                Print("Do you want a hint? y/n", true);
+                GetHint(Console.ReadLine().ToLower());
+                amountHints--;
+            }
+            else if (currentAttemptsAtGuessingWord >= (word.Length - word.Length) + 2 && chosenMode == "easy")
+            {
+                Print("Do you want a hint? y/n", true);
+                GetHint(Console.ReadLine().ToLower());
+                amountHints--;
+            }
+        }
+
+        private static void GetHint(string response)
+        {
+            if (response == "yes" || response == "j")
+            {
+                Print("There may be a(n) ", false);
+                Colors.AddColor(LetterHint().ToString(), Colors.Green, true);
+                Print(" somewhere in there", true);
+            }
+            else
+            {
+                checkPlayStatus();
+            }
+        }
+
+        public static void chooseDifficulty()
+        {
+            Clear();
+            Print("What difficulty do you want?", true);
+            Print("1 - Easy", true);
+            Print("2 - Extreme", true);
+            string difficulty = Console.ReadLine().ToLower();
+            if (difficulty == "extreme" || difficulty == 2.ToString())
+            {
+                extremeDifficulty();
+            }
+            else
+            {
+                easyDifficulty();
+            }
+            Clear();
+            GameLogic();
+        }
+
+        private static void easyDifficulty()
+        {
+            chosenMode = "easy";
+            amountHints = 2;
+            increaseInDrawing = 1;
+            startCheck = false;
+        }
+
+        private static void extremeDifficulty()
+        {
+            chosenMode = "extreme";
+            amountHints = 1;
+            increaseInDrawing = 3;
+            startCheck = true;
         }
 
         private static List<string> createNewList()
@@ -98,17 +167,7 @@ namespace GAME
             return wordsFromFile;
         }
 
-        private static void GetHint(string response)
-        {
-            if (response == "yes" || response == "j")
-            {
-                Print("kldasjkldjaskldja     " + LetterHint().ToString());
-            }
-            else
-            {
-                checkPlayStatus();
-            }
-        }
+
 
         private static char LetterHint()
         {
@@ -135,7 +194,6 @@ namespace GAME
             }
             else if (currentAttemptsAtGuessingWord == MAX_ATTEMPTS)
             {
-
                 Print(currentDrawing);
                 Print(DifferentLanguages.appText.YouLost + $"{word}");
                 isPlaying = false;
