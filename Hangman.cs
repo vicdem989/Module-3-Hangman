@@ -34,18 +34,18 @@ namespace GAME
         }
 
         public static void GameLogic()
-        {
+        {   
             word = PickRandomItemFromList(wordsFromFile);
+            wordDisplay = CreateWordDisplay(word);
             while (isPlaying)
             {
-
                 if (DEBUG)
                 {
                     Print(DifferentLanguages.appText.Word + $"{word}");
                 }
                 Print(DifferentLanguages.appText.Word + $"{wordDisplay}");
                 Print(currentDrawing);
-                Print(DifferentLanguages.appText.GuessLetter, newLine: false);
+                Print(DifferentLanguages.appText.GuessLetter, false);
 
                 guess = ReadChar();
                 if (word.Contains(guess) && !charGuessed.Contains(guess))
@@ -121,7 +121,6 @@ namespace GAME
                 if (charGuessedCheck)
                     chosenLetter = word[randomNumber.Next(0, word.Length)];
             } while (charGuessedCheck);
-
             return chosenLetter;
         }
 
@@ -168,7 +167,7 @@ namespace GAME
             Console.Clear();
         }
 
-        private static void Print(string text, bool newLine = true)
+        private static void Print(string text = "", bool newLine = true)
         {
             if (newLine)
             {
@@ -180,8 +179,14 @@ namespace GAME
             }
         }
 
+
+
         public static string PickRandomItemFromList(List<string> list)
         {
+            //If player want easy mode, pick easy words (word.Length < 7(?)) and half the "difficult" attempts
+            //if player wants difficult, longer words and double "easy" attempts
+            //If easy, 2 hints
+            //If hard, 1 hint
             return wordsFromFile[randomNumber.Next(wordsFromFile.Count - 2)];
         }
 
